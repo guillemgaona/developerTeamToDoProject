@@ -1,3 +1,26 @@
-{
-    "tasks": []
-}
+[
+	{
+		"idtasks" : 1,
+		"title" : "clonar repo",
+		"description" : "clonar o descargar el repositorio",
+		"status" : "finished",
+		"start_time" : "2023-03-23 15:30:45",
+		"end_time" : "2023-03-24 15:30:45"
+	},
+	{
+		"idtasks" : 2,
+		"title" : "nueva rama",
+		"description" : "crear nueva rama",
+		"status" : "execution",
+		"start_time" : "2023-03-24 15:30:45",
+		"end_time" : null
+	},
+	{
+		"idtasks" : 3,
+		"title" : "compartir",
+		"description" : "compartir la nueva rama con el mentor",
+		"status" : "earring",
+		"start_time" : "2023-03-24 15:30:45",
+		"end_time" : null
+	}
+]

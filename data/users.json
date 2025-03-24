@@ -1,0 +1,14 @@
+[
+	{
+		"idusers" : 1,
+		"username" : "guille",
+		"password" : "1234",
+		"email" : "guille@mail.com"
+	},
+	{
+		"idusers" : 2,
+		"username" : "ivonne",
+		"password" : "asdf",
+		"email" : "ivonne@mai.com"
+	}
+]
