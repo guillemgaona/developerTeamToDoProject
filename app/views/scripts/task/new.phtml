@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create New Task</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Create New Task</h1>
+                <a href="/task" class="text-blue-500 hover:text-blue-700">&larr; Back to Tasks</a>
+            </div>
+        </header>
+        
+        <?php if (isset($this->error)): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><?= $this->error ?></span>
+            </div>
+        <?php endif; ?>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <form action="/task/create" method="POST">
+                <div class="mb-4">
+                    <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
+                    <input type="text" id="title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+                    <textarea id="description" name="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="userId" class="block text-gray-700 font-bold mb-2">User</label>
+                    <select id="userId" name="userId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <?php foreach ($this->users as $user): ?>
+                            <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Create Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
