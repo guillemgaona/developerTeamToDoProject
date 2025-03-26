@@ -7,27 +7,30 @@ class Model
 {
 	protected $_dbh = null;
 	protected $_table = "";
-	
+
 	public function __construct()
 	{
-		// parses the settings file
+		// Parses the settings file
 		$settings = parse_ini_file(ROOT_PATH . '/config/settings.ini', true);
-		
-		// starts the connection to the database
-		$this->_dbh = new PDO(
-			sprintf(
-				"%s:host=%s;dbname=%s",
-				$settings['database']['driver'],
-				$settings['database']['host'],
-				$settings['database']['dbname']
-			),
-			$settings['database']['user'],
-			$settings['database']['password'],
-			array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
-		);
-		
+
+		// Check if a database connection is required
+		if ($settings['database']['driver'] !== 'json') {  // Change 'json' based on your config
+			$this->_dbh = new PDO(
+				sprintf(
+					"%s:host=%s;dbname=%s",
+					$settings['database']['driver'],
+					$settings['database']['host'],
+					$settings['database']['dbname']
+				),
+				$settings['database']['user'],
+				$settings['database']['password'],
+				array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+			);
+		}
+
 		$this->init();
 	}
+
 	
 	public function init()
 	{

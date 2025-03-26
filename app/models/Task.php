@@ -4,14 +4,15 @@ class Task extends Model {
     private ?int $id;
     private string $title;
     private string $description;
-    private bool $status;
+    private Status $status;
     private ?DateTime $startTime;
     private ?DateTime $endTime;
     private ?int $userId;
 
-    private $jsonFile = ROOT_PATH . '/data/tasks.json';
+    private string $jsonFile;
+    private array $data = [];
 
-    public function __construct(?int $id = null, string $title = " ", string $description = " ", bool $status = false, ?DateTime $startTime = null, ?DateTime $endTime = null, ?int $userID = null) {
+    public function __construct(?int $id = null, string $title = " ", string $description = " ", Status $status = Status::pending, ?DateTime $startTime = null, ?DateTime $endTime = null, ?int $userID = null) {
         parent::__construct();
         $this->id = $id; 
         $this->title = $title;
@@ -20,6 +21,8 @@ class Task extends Model {
         $this->startTime = $startTime;
         $this->endTime = $endTime;
         $this->userId = $userID;
+        $this->jsonFile = ROOT_PATH . '/data/tasks.json';
+        $this->data = $this->loadData();
     }
 
     public function getId(): int {
@@ -34,7 +37,7 @@ class Task extends Model {
         return $this->description;
     }
 
-    public function getStatus(): bool {
+    public function getStatus(): Status {
         return $this->status;
     }
 
@@ -62,7 +65,7 @@ class Task extends Model {
         $this->description = $description;
     }
 
-    public function setStatus(bool $status): void {
+    public function setStatus(Status $status): void {
         $this->status = $status;
     }
 
@@ -78,14 +81,25 @@ class Task extends Model {
         $this->userId = $userId;
     }
 
+    public function loadData(): array {
+        if (!file_exists($this->jsonFile)) {
+            return [];
+        }
+        
+        $json = file_get_contents($this->jsonFile);
+        $data = json_decode($json, true);
+        
+        return $data ?? [];
+    }
+
     public function toArray(): array {
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status,
-            'startTime' => $this->startTime,
-            'endTime' => $this->endTime,
+            'startTime' => $this->startTime?->format('Y-m-d H:i:s'),
+            'endTime' => $this->endTime?->format('Y-m-d H:i:s'),
             'userId' => $this->userId
         ];
     }
@@ -96,7 +110,7 @@ class Task extends Model {
             $data['id'] ?? null,
             $data['title'] ?? '',
             $data['description'] ?? '',
-            $data['status'] ?? 'false',
+            $data['status'] ?? 'pending',
             $data['startTime'] ?? null,
             $data['endTime'] ?? null,
             $data['userId'] ?? null
@@ -104,45 +118,81 @@ class Task extends Model {
 
     }
 
-    public function getAllTasks(): array {
-        $json = file_get_contents(self::$jsonFile);
-        $jsonDecoded = json_decode($json, true);
-
-        if (empty($jsonDecoded)) {
-            $jsonDecoded = [];
-        }
-        return $jsonDecoded;
+    public function fetchByStatus($status)
+    {
+        return array_filter($this->data, function($task) use ($status) {
+            return $task['status'] === $status;
+        });
     }
 
-    public function saveTask(): void {
-        $tasks = self::getAllTasks();
-        
-        // Check if task exists
-        $index = -1;
-        foreach ($tasks as $i => $task) {
-            if ($task['id'] === $this->id) {
-                $index = $i;
-                break;
-            }
-        }
-        
-        if ($index >= 0) {
-            // Update existing task
-            $tasks[$index] = $this->toArray();
-        } else {
-            // Add new task
-            $tasks[] = $this->toArray();
-        }
-        
-        $this->saveToJson($tasks);
-       
-    }
-
-    protected function saveToJson($data)
+    protected function _saveData()
     {
         file_put_contents(
             $this->jsonFile,
-            json_encode($data, JSON_PRETTY_PRINT)
+            json_encode($this->data, JSON_PRETTY_PRINT)
         );
     }
+    
+    public function save($data = array()){
+        if (isset($data['id'])) {
+            foreach ($this->data as $key => $item) {
+                if ($item['id'] == $data['id']) {
+                    $this->data[$key] = array_merge($item, $data); 
+                    $this->_saveData();
+                    return $data['id'];
+                }
+            }
+            return false;
+        } 
+        else {
+            $data['id'] = uniqid();
+            
+            $this->data[] = $data;
+            
+            $this->_saveData();
+            return $data['id'];
+        }
+    }
+    
+
+    public function fetchOne($id)
+    {
+        foreach ($this->data as $item) {
+            if ($item['id'] == $id) { 
+                return $item;
+            }
+        }
+        
+    }
+
+    public function delete($id){
+        
+        foreach ($this->data as $key => $item) {
+            if ($item['id'] == $id) {
+
+                unset($this->data[$key]);
+                
+                $this->data = array_values($this->data);
+                
+                $this->_saveData();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public function fetchByTaskTitle($taskTitle){
+
+        return array_filter($this->data, function($task) use ($taskTitle) {
+            return $task['title'] === $taskTitle;
+        });
+    }
+
+}
+
+enum Status: string {
+    case pending = 'pending';
+    case in_progress = 'in_progress';
+    case done = 'done';   
 }
