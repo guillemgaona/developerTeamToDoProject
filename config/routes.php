@@ -10,9 +10,16 @@
  * '/calendar' => 'calendar#index'
  */
 $routes = array(
-	'/test' => 'test#index',
+	'/login' => 'auth#login',
+    '/register' => 'auth#register',
+    '/logout' => 'auth#logout',
+    
+    '/task/show' => 'task#show',
+    '/tasks' => 'task#index', 
+    '/task/findTasks' => 'task#findTasks',
+    '/task/add' => 'task#add',
+    '/task/delete' => 'task#delete',
+    '/task/move' => 'task#move', 
 
-	'/task' => 'task#index',
-	'/task/new' => 'task#new',
-	'/task/create' => 'task#create'
+    '/' => 'auth#login'
 );

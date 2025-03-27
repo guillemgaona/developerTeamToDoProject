@@ -1,11 +1,20 @@
 [
     {
-        "id": 1,
+        "id": "1",
         "title": "Task 1",
-        "description": "Description",
+        "description": "This is the first task.",
         "status": "pending",
-        "startTime": "2021-01-01",
-        "endTime": "2021-01-01",
+        "startTime": "2025-03-01 10:00:00",
+        "endTime": null,
         "userId": 1
+    },
+    {
+        "id": "2",
+        "title": "Task 2",
+        "description": "This is the second task.",
+        "status": "done",
+        "startTime": "2025-03-02 12:00:00",
+        "endTime": "2025-03-03 14:00:00",
+        "userId": 2
     }
 ]
